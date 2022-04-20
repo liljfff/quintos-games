@@ -25,6 +25,11 @@ ball.y = height / 2;
 ball.velocity.x = 1;
 ball.velocity.y = 1;
 
+let leftScore = 0;
+let rightScore = 0;
+
+text(leftScore, 3, 18);
+text(rightScore, 3, 15);
 /* PART A0: create two paddles, place on each end of the screen */
 let paddleL = createSprite(imgPaddle);
 paddleL.x = 16;
@@ -45,8 +50,19 @@ bottomwall.y = 182;
 function draw() {
 	background(0);
 
-	paddleL.y = mouseY;
-	paddleR.y = mouseY;
+	if (isKeyDown('ArrowUp') && paddleR.y > 12) {
+		paddleR.y -= 2; // move the player right by 2 pixels
+	}
+	if (isKeyDown('ArrowDown') && paddleR.y < 135) {
+		paddleR.y += 2; // move the player left by 2 pixels
+	}
+
+	if (isKeyDown('W') && paddleL.y > 12) {
+		paddleL.y -= 2; // move the player right by 2 pixels
+	}
+	if (isKeyDown('S') && paddleL.y < 135) {
+		paddleL.y += 2; // move the player left by 2 pixels
+	}
 
 	if (ball.y == topwall.y) {
 		ball.velocity.y = 1;
@@ -65,6 +81,33 @@ function draw() {
 		ball.y < paddleR.y + paddleR.h
 	) {
 		ball.velocity.x = -1;
+	}
+
+	// left side player lost the ball
+	if (ball.x < -15) {
+		rightScore = rightScore + 1;
+		text(rightScore, 3, 15);
+		ball.velocity.x = 1; // serve right
+	}
+	// right side player lost the ball
+	if (ball.x > width + 15) {
+		leftScore = leftScore + 1;
+		text(leftScore, 3, 18);
+		ball.velocity.x = -1; // serve left
+	}
+
+	// if either player lost the ball
+	if (ball.x < -15 || ball.x > width + 15) {
+		// move ball to center
+		ball.x = width / 2;
+		ball.y = height / 2;
+		// serve ball up or down
+		let serveY = Math.random();
+		if (serveY > 0.5) {
+			ball.velocity.y = -1;
+		} else {
+			ball.velocity.y = 1;
+		}
 	}
 
 	drawSprites();
